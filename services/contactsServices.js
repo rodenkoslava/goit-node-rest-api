@@ -1,7 +1,8 @@
 const fs = require("fs/promises");
 const path = require("path");
+const { nanoid } = require("nanoid");
 
-const contactsPath = path.join(__dirname, "contacts.json");
+const contactsPath = path.join(__dirname, "../", "db", "contacts.json");
 
 async function listContacts() {
   try {
@@ -43,9 +44,9 @@ async function removeContact(contactId) {
   }
 }
 
-async function addContact(name, email, phone) {
+async function addContact(data) {
   try {
-    const newContact = { id: Date.now(), name, email, phone };
+    const newContact = { id: nanoid(), ...data };
     const contacts = await listContacts();
     contacts.push(newContact);
     await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
@@ -56,4 +57,28 @@ async function addContact(name, email, phone) {
   }
 }
 
-module.exports = { listContacts, getContactById, removeContact, addContact };
+async function updateContact(contactId, data) {
+  try {
+    const contacts = await listContacts();
+    const index = contacts.findIndex((c) => c.id === contactId);
+
+    if (index === -1) {
+      return null;
+    }
+    const updatedContact = { ...contacts[index], ...data };
+    contacts[index] = updatedContact;
+    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+    return updatedContact;
+  } catch (error) {
+    console.error("Error updating contact:", error.message);
+    return null;
+  }
+}
+
+module.exports = {
+  listContacts,
+  getContactById,
+  removeContact,
+  addContact,
+  updateContact,
+};
