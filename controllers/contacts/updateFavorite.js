@@ -1,3 +1,4 @@
+const { HttpError } = require("../../helpers");
 const Contact = require("../../models");
 
 const updateFavorite = async (req, res) => {
@@ -6,6 +7,18 @@ const updateFavorite = async (req, res) => {
 
   if (favorite === undefined) {
     return res.status(400).json({ message: "missing field favorite" });
+  }
+
+  const existingContact = await Contact.findById(id);
+
+  if (!existingContact) {
+    throw HttpError(404);
+  }
+
+  if (existingContact.favorite === favorite) {
+    return res
+      .status(400)
+      .json({ message: "new favorite value is the same as the current value" });
   }
 
   const updateStatusContact = await Contact.findByIdAndUpdate(
