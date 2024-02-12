@@ -8,6 +8,10 @@ const avatarsDir = path.join(__dirname, "../..", "public", "avatars");
 const updateAvatar = async (req, res) => {
   const { _id } = req.user;
 
+  if (!req.file) {
+    return res.status(400).json({ message: "No file attached" });
+  }
+
   const { path: tmpUpload, originalname } = req.file;
   const filename = `${_id}_${originalname}`;
   const img = await Jimp.read(tmpUpload);
