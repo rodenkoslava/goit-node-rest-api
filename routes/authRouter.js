@@ -1,18 +1,24 @@
 const express = require("express");
 const { validateBody } = require("../helpers");
-const { authSchema } = require("../schemas");
+const { authSchema, emailSchema } = require("../schemas");
 const {
   register,
   login,
   getCurrent,
   logout,
   updateAvatar,
+  verifyEmail,
+  resentVerifyEmail,
 } = require("../controllers/auth");
 const { authdentificate, upload } = require("../middlewares");
 
 const authRouter = express.Router();
 
 authRouter.post("/register", validateBody(authSchema), register);
+
+authRouter.get("/verify/:verificationToken", verifyEmail);
+
+authRouter.post("/verify", validateBody(emailSchema), resentVerifyEmail);
 
 authRouter.post("/login", validateBody(authSchema), login);
 
