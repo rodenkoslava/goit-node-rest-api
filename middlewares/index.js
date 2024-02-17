@@ -1,4 +1,5 @@
 const isValidId = require("./isValidId");
-const authdentificate = require("./authdentificate.js");
+const authdentificate = require("./authdentificate");
+const upload = require("./upload");
 
-module.exports = { isValidId, authdentificate };
+module.exports = { isValidId, authdentificate, upload };
